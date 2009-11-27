@@ -1,117 +1,132 @@
 #!/usr/bin/env python
-import threading
-import xml.dom.minidom
-import libxml2
-import urllib
 from BeautifulSoup import BeautifulSoup
-import MySQLdb
-import time
-import re
+from lib import game, atbats, hitchart, players, CONSTANTS, fetch, store
+from sys import argv
+from getopt import getopt
+import logging
 
-TYPE = 'mlb'
-YEAR = 2009
-BASE = 'http://gd2.mlb.com/components/game/%s/' % TYPE
-CNF='/home/wells/.my.cnf'
-DATABASE='gameday'
+def usage():
+	print argv[0], \
+		'--year=XXXX', \
+		'\n\n', \
+		'optional: --month=x,y --day=x,y --type=[mlb, aaa, aa]'
+	raise SystemExit
 
-class Game:
-	FIELDS = ['game_id', 'game_pk', 'home_sport_code', 'home_team_code', 'home_id', 'home_fname', 'home_sname', 'home_wins', \
-		'home_loss', 'away_team_code', 'away_id', 'away_fname', 'away_sname', 'away_wins', 'away_loss', 'status_ind', 'date']
+def getMonths(year):
+	months = []
 
-	def _parseBox(self, elem):
-		for key in elem.attributes.keys():
-			if key in Game.FIELDS:
-				val = elem.attributes[key].value
+	url = '%syear_%4d/' % (CONSTANTS.BASE, year)
+	soup = BeautifulSoup(fetch(url))
+	for link in soup.findAll('a'):
+		if link['href'].find('month') >= 0:
+			month = int(link['href'].replace('month_', '').rstrip('/'))
+			months.append(month)
 
-				if key == 'date':
-					val = MySQLdb.DateFromTicks(time.mktime(time.strptime(val, '%B %d, %Y')))
-				elif val.isdigit():
-					val = int(val)
-				else:
-					val = str(val)
-				
-				setattr(self, key, val)
+	return months
 
-	def save(self):
-		if self.status_ind == 'F':
-			sql = 'INSERT INTO game (%s) VALUES(%s)' % (','.join(Game.FIELDS), ','.join(['%s'] * len(Game.FIELDS)))
-			cursor.execute(sql, [getattr(self, field) for field in Game.FIELDS])
-			db.commit()
-			
-			for inning in self.innings:
-				for atbat in inning:
-					sql = 'INSERT INTO atbat (%s) VALUES(%s)' % (','.join(atbat.keys()), ','.join(['%s'] * len(atbat.keys())))
-					cursor.execute(sql, atbat.values())
-				db.commit()
-					
+def getDays(year, month):
+	days = []
+	
+	url = '%syear_%4d/month_%02d/' % (CONSTANTS.BASE, year, month)
+	soup = BeautifulSoup(fetch(url))
+	for link in soup.findAll('a'):
+		if link['href'].find('day') >= 0:
+			day = int(link['href'].replace('day_', '').rstrip('/'))
+			days.append(day)
 
-	def __init__(self, href):
-		self.game_id = href.rstrip('/')
-		self.innings = []
+	return days
+
+if __name__ == '__main__':
+	TYPE = 'mlb'
+	YEAR = None
+	MONTH = None
+	DAY = None
+	VERBOSE = False
+	log = logging.getLogger('lib')
+	
+	try:
+		opts, args = getopt(argv[1:], '', ['verbose', 'delta', 'year=', 'month=', 'day=', 'type='])
+	except:
+		usage()
+
+	for opt, arg in opts:
+		if opt == '--verbose':
+			VERBOSE = True
+		elif opt == '--year':
+			YEAR = int(arg)
+		elif opt == '--month':
+			try:
+				MONTH = [int(x) for x in arg.split(',')]
+			except:
+				usage()
+		elif opt == '--day':
+			try:
+				DAY = [int(x) for x in arg.split(',')]
+			except:
+				usage()
+		elif opt == '--type':
+			if arg not in ['mlb', 'aaa']:
+				usage()
+			TYPE = arg
 		
-		_info = self.game_id.split('_')
-		url = '%syear_%4d/month_%02d/day_%02d/%s/' % (BASE, int(_info[1]), int(_info[2]), int(_info[3]), self.game_id)
-		soup = BeautifulSoup(fetch(url))
-
-		box_url = '%sboxscore.xml' % url
-		contents = fetch(box_url)
+	if YEAR is None:
+		usage()
 		
-		if contents is not None:
-			doc = xml.dom.minidom.parseString(contents)
-			if doc.getElementsByTagName('boxscore').length == 1:
-				self._parseBox(doc.getElementsByTagName('boxscore').item(0))
-		
-				innings_url = '%sinning/' % url
-				soup = BeautifulSoup(fetch(innings_url))
-		
-				inning = 0
-				for inning_link in soup.findAll('a'):
-					if re.search(r'inning_\d+\.xml', inning_link['href']):
-						inning_url = '%s%s' % (innings_url, inning_link['href'])
-						doc = xml.dom.minidom.parseString(fetch(inning_url))
-						self.innings.append([])
-				
-						values = {}
-						for atbat in doc.getElementsByTagName('atbat'):
-							half = atbat.parentNode.nodeName
-							for key in atbat.attributes.keys():
-								values[str(key)] = atbat.attributes[key].value
-							values['half'] = half
-							values['game_id'] = self.game_id
-							values['inning'] = inning + 1
-					
-							self.innings[inning].append(values)
-						inning += 1	
+	if VERBOSE:
+		log.setLevel(logging.DEBUG)
+		log.addHandler(logging.StreamHandler())
+	else:
+		log.setLevel(logging.ERROR)
+		log.addHandler(logging.StreamHandler())
+	
+	#CONSTANTS.BASE = CONSTANTS.BASE + '%s/' % TYPE
+	
+	url = '%syear_%4d/' % (CONSTANTS.BASE, YEAR)
+	soup = BeautifulSoup(fetch(url))
 
-				self.save()
-
-def fetch(url):
-	for i in xrange(10):
-		#print 'fetching %s (%d)' % (url, i)
-		try:
-			page = urllib.urlopen(url)
-		except IOError:
-			time.sleep(1)
-			continue
-
-		if page.getcode() == 404:
-			return None
+	if MONTH is None:
+		months = getMonths(YEAR)
+	else:
+		months = MONTH
+	
+	for month in months:
+		if DAY is None:
+			days = getDays(YEAR, month)
 		else:
-			return page.read()
-		break
+			days = DAY
+			
+		month_url = '%smonth_%02d' % (url, month)
+		month_soup = BeautifulSoup(fetch(month_url))
 
-db = MySQLdb.connect(host="localhost", read_default_file=CNF, db=DATABASE)
-cursor = db.cursor()
-url = '%syear_%4d/month_%02d/' % (BASE, YEAR, 5)
-soup = BeautifulSoup(fetch(url))
+		for day in days:
+			day_url = '%s/day_%02d' % (month_url, day)
+			day_soup = BeautifulSoup(fetch(day_url))
 
-for link in soup.findAll('a'):
-	if link['href'].find('day') >= 0:
-		day_url = '%s%s' % (url, link['href'])
-		day_soup = BeautifulSoup(fetch(day_url))
+			for game_link in day_soup.findAll('a'):
+				if game_link['href'].find('gid_') >= 0:
+					game_id = game_link['href'].rstrip('/')
 
-		for game_link in day_soup.findAll('a'):
-			if game_link['href'].find('gid_') >= 0:
-				game = Game(game_link['href'])
+					g = game.Game(game_id)
+					g.save()
 
-db.close()
+					ab = atbats.AtBats(game_id)
+					ab.save()
+					
+					hitchart = hitchart.HitChart(game_id)
+					hitchart.save()
+					
+					batters = players.Batters(game_id)
+					batters.save()
+
+					pitchers = players.Pitchers(game_id)
+					pitchers.save()
+
+			# update last after a day
+			sql = 'DELETE FROM last;'
+			store.query(sql, None)
+			
+			sql = 'INSERT INTO last (year, month, day) VALUES(%s, %s, %s)'
+			store.query(sql, [YEAR, month, day])
+			store.save()
+
+	store.finish()
