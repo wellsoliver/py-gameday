@@ -111,8 +111,8 @@ CREATE TABLE `player` (
 	jersey_number varchar(2) default null,
 	height varchar(5) default null,
 	weight int default null,
-	bats enum('L', 'R', 'S'),
-	throws enum('L', 'R'),
+	bats varchar(3) default null,/* enum('L', 'R', 'S'),*/
+	throws varchar(3) default null,/* enum('L', 'R'),*/
 	dob varchar(20) default null
 ) ENGINE=InnoDB;
 

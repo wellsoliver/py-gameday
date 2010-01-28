@@ -13,18 +13,20 @@ class Pitch:
 			setattr(self, str(key), element.attributes[key].value)
 
 	def save(self):
+		DB = store.Store()
 		sql = 'REPLACE INTO pitch (%s) VALUES(%s)' % (','.join(self.__dict__.keys()), ','.join(['%s'] * len(self.__dict__.keys())))
-		store.query(sql, self.__dict__.values())
+		DB.query(sql, self.__dict__.values())
+		DB.save()
 
 class AtBats(list):
 	
 	def save(self):
+		DB = store.Store()
 		for inning in self:
 			for atbat in inning:
 				sql = 'REPLACE INTO atbat (%s) VALUES(%s)' % (','.join(atbat.keys()), ','.join(['%s'] * len(atbat.keys())))
-				store.query(sql, atbat.values())
-
-		store.save()
+				DB.query(sql, atbat.values())
+			DB.save()
 	
 	def __init__(self, game_id):
 		super(AtBats,self).__init__()
@@ -32,7 +34,7 @@ class AtBats(list):
 		year, month, day = game_id.split('_')[1:4]
 		url = '%syear_%s/month_%s/day_%s/%s/inning/' % (CONSTANTS.BASE, year, month, day, game_id)
 		
-		contents = fetch(url)
+		contents = Fetcher.fetch(url)
 		if contents is None:
 			return
 		
@@ -42,7 +44,7 @@ class AtBats(list):
 		for inning_link in soup.findAll('a'):
 			if search(r'inning_\d+\.xml', inning_link['href']):
 				inning_url = '%s%s' % (url, inning_link['href'])
-				doc = minidom.parseString(fetch(inning_url))
+				doc = minidom.parseString(Fetcher.fetch(inning_url))
 				self.append([])
 
 				values = {}

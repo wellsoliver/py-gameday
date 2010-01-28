@@ -2,7 +2,7 @@ from xml.dom import minidom
 from BeautifulSoup import BeautifulSoup
 from MySQLdb import DateFromTicks
 from time import mktime, strptime
-from . import *
+from . import CONSTANTS, store, Fetcher
 
 class Game:
 	FIELDS = ['game_id', 'game_type', 'game_pk', 'home_sport_code', 'home_team_code', 'home_id', 'home_fname', 'home_sname', 'home_wins', \
@@ -28,9 +28,11 @@ class Game:
 		if self.status_ind and \
 			self.game_type and \
 			self.status_ind == 'F':
+			DB = store.Store()
+
 			sql = 'REPLACE INTO game (%s) VALUES(%s)' % (','.join(Game.FIELDS), ','.join(['%s'] * len(Game.FIELDS)))
-			store.query(sql, [getattr(self, field) for field in Game.FIELDS])
-			store.save()
+			DB.query(sql, [getattr(self, field) for field in Game.FIELDS])
+			DB.save()
 
 	def __init__(self, game_id):
 		self.game_id = game_id
@@ -38,17 +40,13 @@ class Game:
 
 		year, month, day = game_id.split('_')[1:4]
 		url = '%syear_%s/month_%s/day_%s/%s/' % (CONSTANTS.BASE, year, month, day, game_id)
-		try:
-			soup = BeautifulSoup(fetch(url))
-		except:
-			print 'error processing %s' % url
-			return
+		soup = BeautifulSoup(Fetcher.fetch(url))
 
 		box_url = '%sboxscore.xml' % url
-		contents = fetch(box_url)
+		contents = Fetcher.fetch(box_url)
 		
 		linescore_url = '%slinescore.xml' % url
-		linescore_contents = fetch(linescore_url)
+		linescore_contents = Fetcher.fetch(linescore_url)
 		
 		if contents is not None and linescore_contents is not None:
 			doc = minidom.parseString(contents)
