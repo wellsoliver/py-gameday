@@ -1,0 +1,28 @@
+YE DESCRIPTION
+-
+Parses the Gameday XML data, including the Pitch/FX stuff, saving it all to a MySQL database.
+
+
+YE REQUIREMENTS
+-
+Python 2.6+ (2.5 will not work)
+BeautifulSoup http://www.crummy.com/software/BeautifulSoup/
+MySQLDb
+MySQL 5.0 and up, maybe 4.x too - who knows?
+
+
+YE INSTRUCTIONS
+-
+Consult the wiki @ http://wiki.github.com/wellsoliver/py-gameday/usage
+
+
+YE CAVEATS
+-
+A work in progress! Please do let me know if you think of any suggestions.
+
+
+YE POINT OF CONTACT
+-
+Wells Oliver, wells@submute.net
+http://blog.wellsoliver.com
+
