@@ -164,8 +164,8 @@ if __name__ == '__main__':
 			thread.join()
 			
 		# update last after a day
-		sql = 'DELETE FROM last;'
-		DB.query(sql, None)
+		sql = 'DELETE FROM last WHERE type = %s;'
+		DB.query(sql, [TYPE])
 		
 		sql = 'INSERT INTO last (type, year, month, day) VALUES(%s, %s, %s, %s)'
 		DB.query(sql, [TYPE, YEAR, month, days[-1]])
