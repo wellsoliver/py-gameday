@@ -1,24 +1,22 @@
 DROP TABLE IF EXISTS `game`;
 CREATE TABLE `game` (
         game_id varchar(30) not null primary key,
-		game_type char(1) not null,
-		game_pk int default null,
-
-		home_sport_code varchar(10) default null,
-		home_id int default null,
-		home_team_code varchar(3) default null,
-		home_fname varchar(30) default null,
-		home_sname varchar(30) default null,
-		home_wins int default null,
-		home_loss int default null,
-
-		away_id int default null,
-		away_team_code varchar(3) default null,
-		away_fname varchar(50) default null,
-		away_sname varchar(50) default null,
-		away_wins int default null,
-		away_loss int default null,
-		status_ind char(1) default null,
+	game_type char(1) not null,
+	game_pk int default null,
+	home_sport_code varchar(10) default null,
+	home_id int default null,
+	home_team_code varchar(3) default null,
+	home_fname varchar(30) default null,
+	home_sname varchar(30) default null,
+	home_wins int default null,
+	home_loss int default null,
+	away_id int default null,
+	away_team_code varchar(3) default null,
+	away_fname varchar(50) default null,
+	away_sname varchar(50) default null,
+	away_wins int default null,
+	away_loss int default null,
+	status_ind char(1) default null,
         date date default null
 ) ENGINE=InnoDB;
 
@@ -90,6 +88,7 @@ CREATE TABLE `pitch` (
 
 DROP TABLE IF EXISTS `hitchart`;
 CREATE TABLE `hitchart` (
+        game_id varchar(30) not null primary key,
 	des varchar(25) default null,
 	x float default null,
 	y float default null,
@@ -118,6 +117,7 @@ CREATE TABLE `player` (
 
 DROP TABLE IF EXISTS `last`;
 CREATE TABLE `last` (
+	type varchar(5),
 	year int,
 	month int,
 	day int

@@ -8,7 +8,7 @@ class NullHandler(Handler):
 		pass
 
 class CONSTANTS:
-	BASE = 'http://gd2.mlb.com/components/game/mlb/'
+	BASE = 'http://gd2.mlb.com/components/game/%TYPE%/'
 	CNF='/home/wells/.my.cnf'
 	DATABASE='gameday'
 
@@ -19,7 +19,8 @@ class Fetcher:
 			logger.debug('FETCH %s' % url)
 			try:
 				page = urlopen(url)
-			except IOError:
+			except IOError, e:
+				logger.error('ERROR %s' % url)
 				time.sleep(1)
 				continue
 

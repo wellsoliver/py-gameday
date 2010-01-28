@@ -81,6 +81,8 @@ if __name__ == '__main__':
 	DELTA = False
 	log = logging.getLogger('lib')
 	DB = store.Store()
+	startday = 1
+	startmonth = 1
 	
 	try:
 		opts, args = getopt(argv[1:], '', ['verbose', 'delta', 'year=', 'month=', 'day=', 'type='])
@@ -110,7 +112,11 @@ if __name__ == '__main__':
 			DELTA = True
 			sql = 'SELECT * FROM last'
 			res = DB.query(sql)
-			YEAR, startmonth, startday = [int(x) for x in res[0]]
+			if len(res) == 0:
+				print 'sorry, no delta information found'
+				raise SystemExit
+			else:
+				YEAR, startmonth, startday = [int(x) for x in res[0]]
 
 	if YEAR is None:
 		usage()
@@ -122,6 +128,7 @@ if __name__ == '__main__':
 		log.setLevel(logging.ERROR)
 		log.addHandler(logging.StreamHandler())
 	
+	CONSTANTS.BASE = CONSTANTS.BASE.replace('%TYPE%', TYPE)
 	url = '%syear_%4d/' % (CONSTANTS.BASE, YEAR)
 	soup = BeautifulSoup(Fetcher.fetch(url))
 
@@ -132,10 +139,7 @@ if __name__ == '__main__':
 			months = getMonths(YEAR)
 	else:
 		months = MONTH
-	
-	print months
-	raise SystemExit
-	
+
 	for month in months:
 		if DAY is None:
 			if startday:
@@ -145,7 +149,6 @@ if __name__ == '__main__':
 		else:
 			days = DAY
 		
-		raise SystemExit
 		month_url = '%smonth_%02d' % (url, month)
 		month_soup = BeautifulSoup(Fetcher.fetch(month_url))
 
@@ -164,8 +167,8 @@ if __name__ == '__main__':
 		sql = 'DELETE FROM last;'
 		DB.query(sql, None)
 		
-		sql = 'INSERT INTO last (year, month, day) VALUES(%s, %s, %s)'
-		DB.query(sql, [YEAR, month, days[-1]])
+		sql = 'INSERT INTO last (type, year, month, day) VALUES(%s, %s, %s, %s)'
+		DB.query(sql, [TYPE, YEAR, month, days[-1]])
 		DB.save()
 
 	DB.finish()

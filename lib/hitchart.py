@@ -23,7 +23,7 @@ class HitChart(list):
 
 		doc = minidom.parseString(contents)
 		for element in doc.getElementsByTagName('hip'):
-			hip = {}
+			hip = {'game_id': game_id}
 			for attr in element.attributes.keys():
 				hip[attr] = element.attributes[attr].value
 			self.append(hip)

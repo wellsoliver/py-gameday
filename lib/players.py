@@ -13,8 +13,7 @@ class Players(list):
 			DB.query(sql, player.values())
 		
 		DB.save()
-			
-	
+
 	def __init__(self, game_id):
 		super(Players, self).__init__()
 
