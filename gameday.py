@@ -110,8 +110,8 @@ if __name__ == '__main__':
 			TYPE = arg
 		elif opt == '--delta':
 			DELTA = True
-			sql = 'SELECT * FROM last'
-			res = DB.query(sql)
+			sql = 'SELECT year, month, day FROM last WHERE type = %s'
+			res = DB.query(sql, [TYPE])
 			if len(res) == 0:
 				print 'sorry, no delta information found'
 				raise SystemExit
