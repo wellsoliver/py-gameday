@@ -4,10 +4,12 @@ from re import search
 from . import *
 
 class Pitch:
-	def __init__(self, element, num, game_id):
+	def __init__(self, element, num, count, game_id):
 		
 		self.num = num
 		self.game_id = game_id
+		self.b = count['balls']
+		self.s = count['strikes']
 
 		for key in element.attributes.keys():
 			setattr(self, str(key), element.attributes[key].value)
@@ -56,10 +58,17 @@ class AtBats(list):
 					values['game_id'] = game_id
 					values['inning'] = inning + 1
 					
-					# TODO populate here but don't save here
+					balls = 0
+					strikes = 0
 					for pitch in atbat.getElementsByTagName('pitch'):
-						p = Pitch(pitch, atbat.attributes['num'].value, game_id)
+						count = {'balls': balls, 'strikes': strikes}
+						p = Pitch(pitch, atbat.attributes['num'].value, count, game_id)
 						p.save()
+
+						if pitch.attributes['type'].value == 'B':
+							balls = balls + 1
+						elif pitch.attributes['type'].value == 'S':
+							strikes = strikes + 1
 
 					self[inning].append(values)
 				inning += 1
