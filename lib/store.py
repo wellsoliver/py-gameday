@@ -1,11 +1,12 @@
 from . import *
 import MySQLdb
+import sys
 from ConfigParser import ConfigParser
 
 class Store:
 	def __init__(self, **args):
 		parser = ConfigParser()
-		parser.read('./db.ini')
+		parser.read('%s/db.ini' % sys.path[0])
 		user = parser.get('db', 'user')
 		password = parser.get('db', 'password')
 		db = parser.get('db', 'db')
