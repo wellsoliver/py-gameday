@@ -6,6 +6,8 @@ from getopt import getopt
 import threading
 import logging
 import datetime
+import MySQLdb
+from ConfigParser import ConfigParser
 
 def usage():
 	print argv[0], \
@@ -80,9 +82,14 @@ if __name__ == '__main__':
 	VERBOSE = False
 	DELTA = False
 	log = logging.getLogger('lib')
-	DB = store.Store()
 	startday = 1
 	startmonth = 1
+	
+	try:
+		DB = store.Store()
+	except MySQLdb.Error, e:
+		print 'Database connection problem- did you setup a db.ini? (error: %s)' % e
+		raise SystemExit
 	
 	try:
 		opts, args = getopt(argv[1:], '', ['verbose', 'delta', 'year=', 'month=', 'day=', 'type='])
