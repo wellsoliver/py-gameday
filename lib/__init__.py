@@ -9,8 +9,6 @@ class NullHandler(Handler):
 
 class CONSTANTS:
 	BASE = 'http://gd2.mlb.com/components/game/%TYPE%/'
-	CNF='/home/wells/.my.cnf'
-	DATABASE='gameday'
 
 class Fetcher:
 	@classmethod

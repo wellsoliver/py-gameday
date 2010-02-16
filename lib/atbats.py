@@ -4,12 +4,13 @@ from re import search
 from . import *
 
 class Pitch:
-	def __init__(self, element, num, count, game_id):
+	def __init__(self, element, num, count, game_id, pitcher):
 		
 		self.num = num
 		self.game_id = game_id
 		self.b = count['balls']
 		self.s = count['strikes']
+		self.pitcher = pitcher
 
 		for key in element.attributes.keys():
 			setattr(self, str(key), element.attributes[key].value)
@@ -62,7 +63,7 @@ class AtBats(list):
 					strikes = 0
 					for pitch in atbat.getElementsByTagName('pitch'):
 						count = {'balls': balls, 'strikes': strikes}
-						p = Pitch(pitch, atbat.attributes['num'].value, count, game_id)
+						p = Pitch(pitch, atbat.attributes['num'].value, count, game_id, values['pitcher'])
 						p.save()
 
 						if pitch.attributes['type'].value == 'B':

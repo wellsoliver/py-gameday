@@ -49,6 +49,7 @@ CREATE TABLE `pitch` (
 	/* custom fields */
 	game_id varchar(30) not null,
 	num int,
+	pitcher int,
 	b tinyint(1) default 0,
 	s tinyint(1) default 0,
 	/* gameday fields */
