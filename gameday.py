@@ -57,21 +57,22 @@ class Handler(threading.Thread):
 
 		for link in soup.findAll('a'):
 			if link['href'].find('gid_') >= 0:
-				game_id = link['href'].rstrip('/')
-
-				g = game.Game(game_id)
+				gid = link['href'].rstrip('/')
+				
+				g = game.Game(gid)
 				g.save()
+				game_id = g.game_id
 
-				ab = atbats.AtBats(game_id)
+				ab = atbats.AtBats(gid, game_id)
 				ab.save()
 				
-				chart = hitchart.HitChart(game_id)
+				chart = hitchart.HitChart(gid, game_id)
 				chart.save()
 				
-				batters = players.Batters(game_id)
+				batters = players.Batters(gid, game_id)
 				batters.save()
 
-				pitchers = players.Pitchers(game_id)
+				pitchers = players.Pitchers(gid, game_id)
 				pitchers.save()
 
 if __name__ == '__main__':

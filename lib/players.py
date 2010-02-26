@@ -14,11 +14,11 @@ class Players(list):
 		
 		DB.save()
 
-	def __init__(self, game_id):
+	def __init__(self, gid, game_id):
 		super(Players, self).__init__()
 
-		year, month, day = game_id.split('_')[1:4]
-		url = '%syear_%s/month_%s/day_%s/%s/%ss/' % (CONSTANTS.BASE, year, month, day, game_id, self.type.lower())
+		year, month, day = gid.split('_')[1:4]
+		url = '%syear_%s/month_%s/day_%s/%s/%ss/' % (CONSTANTS.BASE, year, month, day, gid, self.type.lower())
 
 		contents = Fetcher.fetch(url)
 		if contents is None:
@@ -39,12 +39,12 @@ class Players(list):
 
 class Pitchers(Players):
 
-	def __init__(self, game_id):
+	def __init__(self, gid, game_id):
 		self.type = 'PITCHER'
-		super(Pitchers, self).__init__(game_id)
+		super(Pitchers, self).__init__(gid, game_id)
 
 class Batters(Players):
 	
-	def __init__(self, game_id):
+	def __init__(self, gid, game_id):
 		self.type = 'BATTER'
-		super(Batters, self).__init__(game_id)
+		super(Batters, self).__init__(gid, game_id)

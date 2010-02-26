@@ -38,11 +38,11 @@ class AtBats(list):
 				for pitch in atbat['pitches']:
 					pitch.save()
 	
-	def __init__(self, game_id):
+	def __init__(self, gid, game_id):
 		super(AtBats,self).__init__()
 
-		year, month, day = game_id.split('_')[1:4]
-		url = '%syear_%s/month_%s/day_%s/%s/inning/' % (CONSTANTS.BASE, year, month, day, game_id)
+		year, month, day = gid.split('_')[1:4]
+		url = '%syear_%s/month_%s/day_%s/%s/inning/' % (CONSTANTS.BASE, year, month, day, gid)
 		
 		contents = Fetcher.fetch(url)
 		if contents is None:

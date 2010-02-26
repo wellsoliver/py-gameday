@@ -51,7 +51,7 @@ class Game:
 		if contents is not None and linescore_contents is not None:
 			doc = minidom.parseString(contents)
 			line = minidom.parseString(linescore_contents)
-
+			
 			if line.getElementsByTagName('game').length == 1:
 				game = line.getElementsByTagName('game').item(0)
 				self.game_type = game.attributes['game_type'].value
