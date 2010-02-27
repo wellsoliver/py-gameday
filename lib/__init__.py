@@ -19,7 +19,7 @@ class Fetcher:
 				page = urlopen(url)
 			except IOError, e:
 				logger.error('ERROR %s' % url)
-				time.sleep(1)
+				sleep(1)
 				continue
 
 			sleep(.5)
