@@ -86,6 +86,7 @@ CREATE TABLE `pitch` (
 	type_confidence float default 0,
 	spin_dir float default 0,
 	spin_rate float default 0,
+	zone tinyint default 0,
 	primary key(game_id, num, id)
 ) Engine=InnoDB;
 
