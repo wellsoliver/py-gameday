@@ -3,6 +3,7 @@ from BeautifulSoup import BeautifulSoup
 from lib import game, atbats, hitchart, players, store, CONSTANTS, Fetcher
 from sys import argv
 from getopt import getopt
+from time import strptime
 import threading
 import logging
 import datetime
@@ -85,6 +86,9 @@ if __name__ == '__main__':
 	log = logging.getLogger('lib')
 	startday = 1
 	startmonth = 1
+
+	# here lies a hack for the strptime thread bug
+	foo = strptime('30 Nov 00', '%d %b %y')
 	
 	try:
 		DB = store.Store()
