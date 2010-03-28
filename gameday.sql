@@ -41,6 +41,7 @@ CREATE TABLE `atbat` (
 	event varchar(200) default null,
 	home_team_runs int default 0,
 	away_team_runs int default 0,
+	start_tfs int,
 	primary key (game_id, num)
 ) ENGINE=InnoDB;
 
@@ -50,8 +51,9 @@ CREATE TABLE `pitch` (
 	game_id varchar(30) not null,
 	num int,
 	pitcher int,
-	b tinyint(1) default 0,
-	s tinyint(1) default 0,
+	batter int,
+	b tinyint default 0,
+	s tinyint default 0,
 	/* gameday fields */
 	des varchar(100),
 	id int default 0,
@@ -114,8 +116,8 @@ CREATE TABLE `player` (
 	jersey_number varchar(2) default null,
 	height varchar(5) default null,
 	weight int default null,
-	bats varchar(3) default null,/* enum('L', 'R', 'S'),*/
-	throws varchar(3) default null,/* enum('L', 'R'),*/
+	bats varchar(3) default null,
+	throws varchar(3) default null,
 	dob varchar(20) default null
 ) ENGINE=InnoDB;
 
@@ -126,3 +128,10 @@ CREATE TABLE `last` (
 	month int,
 	day int
 ) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `errors`;
+CREATE TABLE `errors` (
+	time timestamp default CURRENT_TIMESTAMP(),
+	message varchar(1000),
+	info text
+);

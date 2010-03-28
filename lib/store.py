@@ -31,9 +31,6 @@ class Store:
 		
 		try:
 			res = self.cursor.execute(query, values)
-		except MySQLdb.Error, e:
-			logger.error('%s: %s' % (e, query))
-		except MySQLdb.Warning, e:
-			logger.error('%s: %s' % (e, query))
-		
-		return self.cursor.fetchall()
+			return self.cursor.fetchall()
+		except (MySQLdb.Error, MySQLdb.Warning), e:
+			logger.error('%s\nQUERY: %s\nVALUES: %s\n\n' % (e.args[1], query, ','.join([str(v) for v in values])))

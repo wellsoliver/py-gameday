@@ -29,5 +29,5 @@ class Fetcher:
 				return page.read()
 			break
 
-logger = getLogger(__name__)
+logger = getLogger('gameday')
 logger.addHandler(NullHandler())

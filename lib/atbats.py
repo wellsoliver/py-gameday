@@ -4,13 +4,14 @@ from re import search
 from . import *
 
 class Pitch:
-	def __init__(self, element, num, count, game_id, pitcher):
+	def __init__(self, element, count, **kwargs):
 		
-		self.num = num
-		self.game_id = game_id
+		self.num = kwargs['num'] if 'num' in kwargs else None
+		self.game_id = kwargs['game_id'] if 'game_id' in kwargs else None
+		self.pitcher = kwargs['pitcher'] if 'pitcher' in kwargs else None
+		self.batter = kwargs['batter'] if 'batter' in kwargs else None
 		self.b = count['balls']
 		self.s = count['strikes']
-		self.pitcher = pitcher
 
 		for key in element.attributes.keys():
 			setattr(self, str(key), element.attributes[key].value)
@@ -29,7 +30,7 @@ class AtBats(list):
 		for inning in self:
 			for atbat in inning:
 				keys = [k for k in atbat.keys() if k != 'pitches']
-				values = [atbat[k] for k in keys]
+				values = [None if atbat[k] == '' else atbat[k] for k in keys]
 				
 				sql = 'REPLACE INTO atbat (%s) VALUES(%s)' % (','.join(keys), ','.join(['%s'] * len(keys)))
 				DB.query(sql, values)
@@ -73,7 +74,11 @@ class AtBats(list):
 					strikes = 0
 					for pitch in atbat.getElementsByTagName('pitch'):
 						count = {'balls': balls, 'strikes': strikes}
-						p = Pitch(pitch, atbat.attributes['num'].value, count, game_id, values['pitcher'])
+						kwargs = {'game_id': game_id,
+							'batter': values['batter'],
+							'pitcher': values['pitcher'],
+							'num': atbat.attributes['num'].value}
+						p = Pitch(pitch, count, **kwargs)
 						values['pitches'].append(p)
 
 						if pitch.attributes['type'].value == 'B':

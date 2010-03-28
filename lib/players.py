@@ -9,6 +9,10 @@ class Players(list):
 		DB = store.Store()
 
 		for player in self:
+			for key in player.keys():
+				if player[key] == '' or player[key] == 'null':
+					player[key] = None
+
 			sql = 'REPLACE INTO player (%s) VALUES(%s)' % (','.join(player.keys()), ','.join(['%s'] * len(player.keys())))
 			DB.query(sql, player.values())
 		

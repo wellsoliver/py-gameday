@@ -83,7 +83,7 @@ if __name__ == '__main__':
 	DAY = None
 	VERBOSE = False
 	DELTA = False
-	log = logging.getLogger('lib')
+	log = logging.getLogger('gameday')
 	startday = 1
 	startmonth = 1
 
@@ -133,12 +133,21 @@ if __name__ == '__main__':
 	if YEAR is None:
 		usage()
 		
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(lineno)s - %(levelname)s - %(message)s')
+
 	if VERBOSE:
 		log.setLevel(logging.DEBUG)
 		log.addHandler(logging.StreamHandler())
 	else:
 		log.setLevel(logging.ERROR)
 		log.addHandler(logging.StreamHandler())
+	
+	logfilename = './log.txt'
+	filelog = logging.FileHandler(logfilename, 'a')
+	filelog.setLevel(logging.ERROR)
+	filelog.setFormatter(formatter)
+	
+	log.addHandler(filelog)
 	
 	CONSTANTS.BASE = CONSTANTS.BASE.replace('%TYPE%', TYPE)
 	url = '%syear_%4d/' % (CONSTANTS.BASE, YEAR)
