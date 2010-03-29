@@ -9,16 +9,18 @@ class NullHandler(Handler):
 
 class CONSTANTS:
 	BASE = 'http://gd2.mlb.com/components/game/%TYPE%/'
+	FETCH_TRIES = 10
 
 class Fetcher:
 	@classmethod
 	def fetch(self, url):
-		for i in xrange(10):
+		for i in xrange(CONSTANTS.FETCH_TRIES):
 			logger.debug('FETCH %s' % url)
 			try:
 				page = urlopen(url)
 			except IOError, e:
-				logger.error('ERROR %s' % url)
+				if i == CONSTANTS.FETCH_TRIES-1:
+					logger.error('ERROR %s (max tries %s exhausted)' % (url, CONSTANTS.FETCH_TRIES))
 				sleep(1)
 				continue
 

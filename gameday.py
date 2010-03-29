@@ -151,7 +151,11 @@ if __name__ == '__main__':
 	
 	CONSTANTS.BASE = CONSTANTS.BASE.replace('%TYPE%', TYPE)
 	url = '%syear_%4d/' % (CONSTANTS.BASE, YEAR)
-	soup = BeautifulSoup(Fetcher.fetch(url))
+	try:
+		soup = BeautifulSoup(Fetcher.fetch(url))
+	except TypeError, e:
+		print 'Could not fetch %s' % url
+		raise SystemExit
 
 	if MONTH is None:
 		if startmonth:
