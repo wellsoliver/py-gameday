@@ -128,10 +128,3 @@ CREATE TABLE `last` (
 	month int,
 	day int
 ) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS `errors`;
-CREATE TABLE `errors` (
-	time timestamp default CURRENT_TIMESTAMP(),
-	message varchar(1000),
-	info text
-);
