@@ -33,8 +33,8 @@ class Store:
 			res = self.cursor.execute(query, values)
 			return self.cursor.fetchall()
 		except (MySQLdb.Error, MySQLdb.Warning), e:
-			if len(e.args > 1):
+			if hasattr(e, 'args'):
 				msg = e.args[1]
 			else:
-				msg = e.args[0]
+				msg = str(e)
 			logger.error('%s\nQUERY: %s\nVALUES: %s\n\n' % (msg, query, ','.join([str(v) for v in values])))
