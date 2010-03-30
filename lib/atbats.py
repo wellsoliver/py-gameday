@@ -5,22 +5,34 @@ from . import *
 
 class Pitch:
 	def __init__(self, element, count, **kwargs):
+
+		values = {}
+		values['num'] = kwargs['num'] if 'num' in kwargs else None
+		values['game_id'] = kwargs['game_id'] if 'game_id' in kwargs else None
+		values['pitcher'] = kwargs['pitcher'] if 'pitcher' in kwargs else None
+		values['batter'] = kwargs['batter'] if 'batter' in kwargs else None
+		values['b'] = count['balls']
+		values['s'] = count['strikes']
 		
-		self.num = kwargs['num'] if 'num' in kwargs else None
-		self.game_id = kwargs['game_id'] if 'game_id' in kwargs else None
-		self.pitcher = kwargs['pitcher'] if 'pitcher' in kwargs else None
-		self.batter = kwargs['batter'] if 'batter' in kwargs else None
-		self.b = count['balls']
-		self.s = count['strikes']
+		# these change a lot :(
+		# tired of taking them from the XML element
+		# because maybe I don't have them in the schema
+		FIELDS = ['des','id','type','x','y','on_1b','on_2b','on_3b','sv_id','start_speed',
+			'end_speed','sz_top','sz_bot','pfx_x','pfx_z','px','pz','x0','y0','z0','vx0','vy0','vz0',
+			'ax','ay','az','break_y','break_angle','break_length','pitch_type','type_confidence',
+			'spin_dir','spin_rate','zone']
 
 		for key in element.attributes.keys():
-			setattr(self, str(key), element.attributes[key].value)
+			if key in FIELDS:
+				values[key] = element.attributes[key].value
+		
+		self.values = values
 
 	def save(self):
 		DB = store.Store()
 
-		sql = 'REPLACE INTO pitch (%s) VALUES(%s)' % (','.join(self.__dict__.keys()), ','.join(['%s'] * len(self.__dict__.keys())))
-		DB.query(sql, self.__dict__.values())
+		sql = 'REPLACE INTO pitch (%s) VALUES(%s)' % (','.join(self.values.keys()), ','.join(['%s'] * len(self.values)))
+		DB.query(sql, self.values.values())
 		DB.save()
 
 class AtBats(list):
@@ -32,7 +44,7 @@ class AtBats(list):
 				keys = [k for k in atbat.keys() if k != 'pitches']
 				values = [None if atbat[k] == '' else atbat[k] for k in keys]
 				
-				sql = 'REPLACE INTO atbat (%s) VALUES(%s)' % (','.join(keys), ','.join(['%s'] * len(keys)))
+				sql ='REPLACE INTO atbat (%s) VALUES(%s)' % (','.join(keys), ','.join(['%s'] * len(keys)))
 				DB.query(sql, values)
 				DB.save()
 				

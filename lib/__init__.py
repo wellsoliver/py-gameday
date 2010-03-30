@@ -24,7 +24,6 @@ class Fetcher:
 				sleep(1)
 				continue
 
-			sleep(.5)
 			if page.getcode() == 404:
 				return None
 			else:

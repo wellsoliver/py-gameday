@@ -33,7 +33,7 @@ class Store:
 			res = self.cursor.execute(query, values)
 			return self.cursor.fetchall()
 		except (MySQLdb.Error, MySQLdb.Warning), e:
-			if hasattr(e, 'args'):
+			if type(e.args) is tuple and len(e.args) > 1:
 				msg = e.args[1]
 			else:
 				msg = str(e)

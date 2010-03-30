@@ -7,7 +7,9 @@ class HitChart(list):
 		DB = store.Store()
 
 		for hip in self:
-			sql = 'REPLACE INTO hitchart (%s) VALUES(%s)' % (','.join(hip.keys()), ','.join(['%s'] * len(hip.keys())))
+			for key in hip.keys():
+				if hip[key] == '': hip[key] = None
+			sql = 'REPLACE INTO hitchart (%s) VALUES(%s)' % (','.join(hip.keys()), ','.join(['%s'] * len(hip)))
 			DB.query(sql, hip.values())
 		DB.save()
 	
