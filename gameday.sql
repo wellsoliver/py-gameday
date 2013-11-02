@@ -2,7 +2,9 @@ DROP TABLE IF EXISTS `game`;
 CREATE TABLE `game` (
 	game_id varchar(30) not null primary key,
 	game_type char(1) not null,
+	local_game_time varchar(10) default null,
 	game_pk int default null,
+	game_time_et varchar(10) default null,
 	home_sport_code varchar(10) default null,
 	home_id int default null,
 	home_team_code varchar(3) default null,
@@ -17,7 +19,11 @@ CREATE TABLE `game` (
 	away_wins int default null,
 	away_loss int default null,
 	status_ind char(1) default null,
-	`date` date default null
+	`date` date default null,
+	day varchar(3) default null,
+	stadium_id int default null,
+	stadium_name varchar(30) default null,
+	stadium_location varchar(30) default null
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `atbat`;
