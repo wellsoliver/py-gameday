@@ -38,10 +38,14 @@ CREATE TABLE `atbat` (
 	pitcher int default null,
 	p_throws char(1) default null,
 	des varchar(500) default null,
+	des_es varchar(500) default null,
 	event varchar(200) default null,
+	event2 varchar(200) default null,
+	event3 varchar(200) default null,
 	home_team_runs int default null,
 	away_team_runs int default null,
 	start_tfs int default null,
+	start_tfs_zulu varchar(25) default null,
 	primary key (game_id, num)
 ) ENGINE=InnoDB;
 
@@ -112,6 +116,7 @@ CREATE TABLE `player` (
 	pos varchar(3) default null,
 	type enum('pitcher', 'batter'),
 	first_name varchar(30) default null,
+	current_position varchar(3) default null,
 	last_name varchar(30) default null,
 	jersey_number varchar(2) default null,
 	height varchar(5) default null,
