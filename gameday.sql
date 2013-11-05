@@ -104,7 +104,8 @@ CREATE TABLE `pitch` (
 
 DROP TABLE IF EXISTS `hitchart`;
 CREATE TABLE `hitchart` (
-	game_id varchar(30) not null primary key,
+	hit_id int unsigned not null auto_increment primary key,
+	game_id varchar(30) not null,
 	des varchar(25) default null,
 	x decimal(7,3) default null,
 	y decimal(7,3) default null,
