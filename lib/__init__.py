@@ -8,7 +8,7 @@ class NullHandler(Handler):
 		pass
 
 class CONSTANTS:
-	BASE = 'http://gd2.mlb.com/components/game/%TYPE%/'
+	BASE = 'http://gd2.mlb.com/components/game/%LEAGUE%/'
 	FETCH_TRIES = 10
 
 class Fetcher:
