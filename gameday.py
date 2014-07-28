@@ -14,7 +14,9 @@ def usage():
 	print argv[0], \
 		'--year=XXXX', \
 		'\n\n', \
-		'optional: --month=x,y --day=x,y --type=[mlb, aaa] --delta --verbose'
+		'optional: --month=x,y --day=x,y --league=[mlb, aaa, aax] --gametype=[R, S, A, F, D, L, W] --delta --verbose', \
+		'\n\n', \
+		'gametype shorthand: R=regular season, S=spring training, A=allstar game, F=wildcard, D=division series, L=league series, W=world series'
 	raise SystemExit
 
 def getMonths(year, start = 1):
@@ -48,9 +50,10 @@ def getDays(year, month, start = 1):
 	return days
 
 class Handler(threading.Thread):
-	def __init__(self, url):
+	def __init__(self, url, gametype):
 		threading.Thread.__init__(self)
 		self.url = url
+		self.gametype = gametype
 
 	def run(self):
 		DB = store.Store()
@@ -61,6 +64,9 @@ class Handler(threading.Thread):
 				gid = link['href'].rstrip('/')
 				
 				g = game.Game(gid)
+				if (g.game_type != self.gametype):
+				    continue;
+
 				g.save()
 				game_id = g.game_id
 
@@ -77,10 +83,11 @@ class Handler(threading.Thread):
 				pitchers.save()
 
 if __name__ == '__main__':
-	TYPE = 'mlb'
+	LEAGUE = 'mlb'
 	YEAR = None
 	MONTH = None
 	DAY = None
+	GAMETYPE = 'R'
 	VERBOSE = False
 	DELTA = False
 	log = logging.getLogger('gameday')
@@ -97,7 +104,7 @@ if __name__ == '__main__':
 		raise SystemExit
 	
 	try:
-		opts, args = getopt(argv[1:], '', ['verbose', 'delta', 'year=', 'month=', 'day=', 'type='])
+		opts, args = getopt(argv[1:], '', ['verbose', 'delta', 'year=', 'month=', 'day=', 'league=', 'gametype='])
 	except:
 		usage()
 
@@ -116,14 +123,18 @@ if __name__ == '__main__':
 				DAY = [int(x) for x in arg.split(',')]
 			except:
 				usage()
-		elif opt == '--type':
-			if arg not in ['mlb', 'aaa']:
+		elif opt == '--league':
+			if arg not in ['mlb', 'aaa', 'aax']:
 				usage()
-			TYPE = arg
+			LEAGUE = arg
+		elif opt == '--gametype':
+		    if arg not in ['R', 'S', 'A', 'F', 'D', 'L', 'W']:
+		        usage()
+		    GAMETYPE = arg
 		elif opt == '--delta':
 			DELTA = True
 			sql = 'SELECT year, month, day FROM last WHERE type = %s'
-			res = DB.query(sql, [TYPE])
+			res = DB.query(sql, [LEAGUE])
 			if len(res) == 0:
 				print 'sorry, no delta information found'
 				raise SystemExit
@@ -149,7 +160,7 @@ if __name__ == '__main__':
 	
 	log.addHandler(filelog)
 	
-	CONSTANTS.BASE = CONSTANTS.BASE.replace('%TYPE%', TYPE)
+	CONSTANTS.BASE = CONSTANTS.BASE.replace('%LEAGUE%', LEAGUE)
 	url = '%syear_%4d/' % (CONSTANTS.BASE, YEAR)
 	try:
 		soup = BeautifulSoup(Fetcher.fetch(url))
@@ -181,7 +192,7 @@ if __name__ == '__main__':
 		for day in days:
 			day_url = '%s/day_%02d' % (month_url, day)
 			
-			handler = Handler(day_url)
+			handler = Handler(day_url, GAMETYPE)
 			handler.start()
 			threads.append(handler)
 			
@@ -190,10 +201,10 @@ if __name__ == '__main__':
 			
 		# update last after a day
 		sql = 'DELETE FROM last WHERE type = %s;'
-		DB.query(sql, [TYPE])
+		DB.query(sql, [LEAGUE])
 		
 		sql = 'INSERT INTO last (type, year, month, day) VALUES(%s, %s, %s, %s)'
-		DB.query(sql, [TYPE, YEAR, month, days[-1]])
+		DB.query(sql, [LEAGUE, YEAR, month, days[-1]])
 		DB.save()
 
 	DB.finish()

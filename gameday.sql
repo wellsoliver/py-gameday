@@ -22,7 +22,7 @@ CREATE TABLE `game` (
 	`date` date default null,
 	day varchar(3) default null,
 	stadium_id int default null,
-	stadium_name varchar(30) default null,
+	stadium_name varchar(40) default null,
 	stadium_location varchar(30) default null
 ) ENGINE=InnoDB;
 
@@ -43,11 +43,12 @@ CREATE TABLE `atbat` (
 	b_height varchar(5) default null,
 	pitcher int default null,
 	p_throws char(1) default null,
-	des varchar(500) default null,
-	des_es varchar(500) default null,
-	event varchar(200) default null,
-	event2 varchar(200) default null,
-	event3 varchar(200) default null,
+	des varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	des_es varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event2 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event3 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event4 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
 	home_team_runs int default null,
 	away_team_runs int default null,
 	start_tfs int default null,

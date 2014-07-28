@@ -11,7 +11,7 @@ class Store:
 		password = parser.get('db', 'password')
 		db = parser.get('db', 'db')
 		
-		args = {'user': user, 'passwd': password, 'db': db}
+		args = {'user': user, 'passwd': password, 'db': db, 'charset': 'utf8'}
 
 		if parser.has_option('db', 'host'):
 			args['host'] = parser.get('db', 'host')
