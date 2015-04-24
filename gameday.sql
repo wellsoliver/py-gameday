@@ -34,6 +34,7 @@ CREATE TABLE `atbat` (
 	inning int default null,
 	/* gameday fields */
 	num int not null,
+	event_num int not null,
 	b int default null,
 	s int default null,
 	o int default null,
@@ -49,6 +50,10 @@ CREATE TABLE `atbat` (
 	event2 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
 	event3 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
 	event4 varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event_es varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event2_es varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event3_es varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
+	event4_es varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci default null,
 	home_team_runs int default null,
 	away_team_runs int default null,
 	start_tfs int default null,

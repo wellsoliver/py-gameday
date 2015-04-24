@@ -37,5 +37,5 @@ class Store:
                 msg = e.args[1]
             else:
                 msg = str(e)
-            logger.error('%s\nQUERY: %s\nVALUES: %s\n\n' % (msg, query, ','.join([str(v) for v in values])))
+            logger.error('%s\nQUERY: %s\nVALUES: %s\n\n' % (msg, query, ','.join([unicode(v) for v in values])))
 
