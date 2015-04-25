@@ -34,7 +34,7 @@ CREATE TABLE `atbat` (
 	inning int default null,
 	/* gameday fields */
 	num int not null,
-	event_num int not null,
+	event_num int default null,
 	b int default null,
 	s int default null,
 	o int default null,

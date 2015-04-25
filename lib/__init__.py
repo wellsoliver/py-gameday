@@ -25,7 +25,7 @@ class Fetcher:
                 continue
 
             if page.getcode() == 404:
-                return None
+                return ""
             else:
                 return page.read()
             break
