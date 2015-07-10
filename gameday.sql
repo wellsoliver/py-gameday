@@ -33,6 +33,7 @@ CREATE TABLE `atbat` (
 	half varchar(10) default null,
 	inning int default null,
 	/* gameday fields */
+	play_guid char(36) default null,
 	num int not null,
 	event_num int default null,
 	b int default null,
@@ -74,8 +75,8 @@ CREATE TABLE `pitch` (
 	des varchar(100) default null,
 	id int default null,
 	type varchar(3) not null,
-	x decimal(7,3) default null,
-	y decimal(7,3) default null,
+	x decimal(18,15) default null,
+	y decimal(18,15) default null,
 	on_1b int default null,
 	on_2b int default null,
 	on_3b int default null,

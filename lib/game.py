@@ -51,7 +51,7 @@ class Game:
         linescore_url = '%slinescore.xml' % url
         linescore_contents = Fetcher.fetch(linescore_url)
         
-        if contents is not None and linescore_contents is not None and game_contents is not None:
+        if contents and linescore_contents and game_contents:
             doc = minidom.parseString(contents)
             line = minidom.parseString(linescore_contents)
             game_general = minidom.parseString(game_contents)
