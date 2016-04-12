@@ -80,15 +80,18 @@ class Handler(threading.Thread):
 
 if __name__ == '__main__':
 
+    current_year = datetime.date.today().year
+
     ############ argparse stuff, to define & capture commandline options
     opt = argparse.ArgumentParser(prog="Py-Gameday",
                         description="Grabs MLB Gameday data",
                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
                     
 
-    opt.add_argument("-y","--year", default="2015", type=int,
+
+    opt.add_argument("-y","--year", default=current_year, type=int,
                      required=True,
-                     choices=range(2001,2016),
+                     choices=range(2001,current_year + 1),
                      metavar='YYYY',
                      help="Required. 4 digit year.",)
     # optional arg's
