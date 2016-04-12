@@ -66,14 +66,14 @@ DROP TABLE IF EXISTS `pitch`;
 CREATE TABLE `pitch` (
 	/* custom fields */
 	game_id varchar(30) not null,
-	num int default null,
+	num int not null,
 	pitcher int default null,
 	batter int default null,
 	b tinyint default null,
 	s tinyint default null,
 	/* gameday fields */
 	des varchar(100) default null,
-	id int default null,
+	id int not null,
 	type varchar(3) not null,
 	x decimal(18,15) default null,
 	y decimal(18,15) default null,
