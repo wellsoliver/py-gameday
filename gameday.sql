@@ -62,6 +62,22 @@ CREATE TABLE `atbat` (
 	primary key (game_id, num)
 ) ENGINE=InnoDB;
 
+DROP TABLE IF EXISTS `runner`;
+CREATE TABLE `runner` (
+	/* custom fields */
+	game_id varchar(30) not null,
+	atbat int not null,
+	runner int not null,
+	start_base varchar(2) null, -- `start` is a reserved word, use `start_base`
+	end_base varchar(2) null, -- `end` is a reserved word, use `end_base`
+	event varchar(32) not null,
+	score tinyint(1) not null default 0,
+	rbi tinyint(1) not null default 0,
+	earned  tinyint(1) not null default 0,
+	pitcher_credited int not null, -- the pitcher that put this runner on base
+	primary key (game_id, atbat, runner)
+) ENGINE=InnoDB;
+
 DROP TABLE IF EXISTS `pitch`;
 CREATE TABLE `pitch` (
 	/* custom fields */
