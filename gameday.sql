@@ -75,7 +75,8 @@ CREATE TABLE `runner` (
 	rbi tinyint(1) not null default 0,
 	earned  tinyint(1) not null default 0,
 	pitcher_credited int not null, -- the pitcher that put this runner on base
-	primary key (game_id, atbat, runner)
+	event_num smallint not null,
+	primary key (game_id, atbat, runner, event_num)
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `pitch`;
