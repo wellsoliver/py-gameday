@@ -137,6 +137,7 @@ class AtBats(list):
                 'start_base': runner.attributes['start'].value,
                 'end_base': runner.attributes['end'].value,
                 'event': runner.attributes['event'].value,
+                'event_num': runner.attributes['event_num'].value,
                 # Default pitcher is the one for this atbat
                 'pitcher_credited': values['pitcher']
             }
