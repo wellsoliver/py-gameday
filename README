@@ -1,4 +1,4 @@
-YE DESCRIPTION
+.................................YE DESCRIPTION
 -
 Parses the Gameday XML data, including the Pitch/FX stuff, saving it all to a MySQL database.
 
